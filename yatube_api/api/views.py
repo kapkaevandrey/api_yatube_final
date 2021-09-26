@@ -1,11 +1,9 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework import mixins
 from rest_framework.filters import SearchFilter
-from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework import mixins
 
 from posts.models import Post, Group, Comment, Follow, User
 from .serializers import PostSerializer, GroupSerializer, CommentSerializer
@@ -53,7 +51,8 @@ class CommentViewSets(viewsets.ModelViewSet):
                         post=post)
 
 
-class FollowViewSets(viewsets.ModelViewSet):
+class FollowViewSets(viewsets.ReadOnlyModelViewSet,
+                     mixins.CreateModelMixin):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     filter_backends = (SearchFilter,)
