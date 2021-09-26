@@ -1,8 +1,10 @@
 from rest_framework import serializers
+from rest_framework import status
 from rest_framework.relations import SlugRelatedField
+from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
-
-from posts.models import Comment, Post, Group
+from posts.models import Comment, Post, Group, Follow, User
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -14,7 +16,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
+    author = SlugRelatedField(
         read_only=True, slug_field='username'
     )
 
@@ -29,3 +31,17 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "slug", "description"]
 
 
+class FollowSerializer(serializers.ModelSerializer):
+    user = SlugRelatedField(slug_field="username", read_only=True)
+    following = SlugRelatedField(slug_field="username",
+                                 read_only=True)
+
+    class Meta:
+        model = Follow
+        fields = ["user", "following"]
+        required_fields = "following"
+
+    def create(self, validated_data):
+        print(validated_data)
+        print(self.initial_data)
+        super().create(validated_data)
