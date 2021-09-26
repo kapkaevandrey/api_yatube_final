@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from rest_framework import status
 from rest_framework.relations import SlugRelatedField
-from rest_framework.exceptions import ValidationError
-from django.shortcuts import get_object_or_404
 
 from posts.models import Comment, Post, Group, Follow, User
 
@@ -32,16 +29,24 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
-    user = SlugRelatedField(slug_field="username", read_only=True)
+    user = SlugRelatedField(slug_field="username", read_only=True,
+                            default=serializers.CurrentUserDefault())
     following = SlugRelatedField(slug_field="username",
-                                 read_only=True)
+                                 queryset=User.objects.all())
 
     class Meta:
         model = Follow
-        fields = ["user", "following"]
-        required_fields = "following"
+        fields = ("user", "following")
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=("following", "user")
+            )
+        ]
 
-    def create(self, validated_data):
-        print(validated_data)
-        print(self.initial_data)
-        super().create(validated_data)
+    def validate(self, attrs):
+        user = self.context["request"].user
+        if attrs['following'] == user:
+            raise serializers.ValidationError(
+                'Не стоит подписываться на самого себя!')
+        return attrs
