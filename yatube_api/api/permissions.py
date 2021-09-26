@@ -1,5 +1,4 @@
 from rest_framework import permissions
-from rest_framework.exceptions import PermissionDenied, NotAuthenticated
 
 
 class AuthorOrReadOnly(permissions.BasePermission):
