@@ -68,4 +68,4 @@ class Follow(models.Model):
                                    user=models.F('following')),
                                    name='following to yourself ')
         ]
-        ordering = ('user__username','following__username')
+        ordering = ('user__username', 'following__username')
