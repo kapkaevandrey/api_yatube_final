@@ -10,10 +10,10 @@ class Group(models.Model):
     description = models.TextField()
 
     def __str__(self):
-        return f" Group title <{self.title}> id <{self.id}>"
+        return self.title
 
     class Meta:
-        ordering = ['title']
+        ordering = ('title',)
 
 
 class Post(models.Model):
@@ -27,15 +27,15 @@ class Post(models.Model):
         upload_to='posts/', null=True, blank=True)
     group = models.ForeignKey(
         Group, on_delete=models.SET_NULL,
-        related_name="posts", blank=True, null=True
+        related_name='posts', blank=True, null=True
     )
 
     def __str__(self):
-        return (f"Author - <{self.author}>; post_id - <{self.id}> "
-                f"text part - <{self.text[:15]}>.")
+        return (f'Author - <{self.author}>; post_id - <{self.id}> '
+                f'text part - <{self.text[:15]}>.')
 
     class Meta:
-        ordering = ["-pub_date"]
+        ordering = ['-pub_date']
 
 
 class Comment(models.Model):
@@ -48,7 +48,7 @@ class Comment(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True)
 
     class Meta:
-        ordering = ["-created"]
+        ordering = ['-created']
 
 
 class Follow(models.Model):
@@ -58,14 +58,14 @@ class Follow(models.Model):
                                   on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Подписчик {self.user}, подписан на {self.following}"
+        return f'Подписчик {self.user}, подписан на {self.following}'
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["user", "following"],
-                                    name="unique follow"),
+            models.UniqueConstraint(fields=['user', 'following'],
+                                    name='unique follow'),
             models.CheckConstraint(check=~models.Q(
-                                   user=models.F("following")),
+                                   user=models.F('following')),
                                    name='following to yourself ')
         ]
-        ordering = ["following__username"]
+        ordering = ('user__username','following__username')
