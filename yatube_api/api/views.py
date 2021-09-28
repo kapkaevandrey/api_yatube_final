@@ -33,11 +33,11 @@ class CommentViewSets(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly, IsAuthenticatedOrReadOnly)
 
     def get_queryset(self):
-        post = get_object_or_404(Post, pk=self.kwargs.get("post_id"))
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         return post.comments
 
     def perform_create(self, serializer):
-        post = get_object_or_404(Post, pk=self.kwargs.get("post_id"))
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
         serializer.save(author=self.request.user,
                         post=post)
 
@@ -46,7 +46,7 @@ class FollowViewSets(mixins.CreateModelMixin,
                      viewsets.ReadOnlyModelViewSet):
     serializer_class = FollowSerializer
     filter_backends = (SearchFilter,)
-    search_fields = ("=following__username",)
+    search_fields = ('=following__username',)
 
     def get_queryset(self):
         return self.request.user.followers
