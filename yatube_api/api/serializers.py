@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from rest_framework.relations import PrimaryKeyRelatedField, SlugRelatedField
+from rest_framework.relations import SlugRelatedField
 from posts.models import Comment, Follow, Group, Post, User
 
 
@@ -43,8 +43,6 @@ class FollowSerializer(serializers.ModelSerializer):
         ]
 
     def validate_following(self, value):
-        print("Это объект", type(value), value)
-        print("Это объект", type(self.context['request'].user), self.context['request'].user)
         if value == self.context['request'].user:
             raise serializers.ValidationError(
                 'Не стоит подписываться на самого себя!')
