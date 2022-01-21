@@ -113,6 +113,7 @@ python3 pip install -r requirments.txt
 >"image": "string",
 >"group": 0
 >}
+>```
 >Response sample (status code = 201)
 >```json
 >{
